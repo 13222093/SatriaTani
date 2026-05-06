@@ -1,0 +1,9 @@
+[
+  { "n": "Bapak Suparjo", "amt": "Rp 9.240.000", "when": "22 Apr 2026", "why": "Banjir · 3/3", "acc": "BCA ****8842" },
+  { "n": "Bapak Karman",  "amt": "Rp 8.580.000", "when": "22 Apr 2026", "why": "Banjir · 3/3", "acc": "BRI ****1207" },
+  { "n": "Bapak Wagiman", "amt": "Rp 6.300.000", "when": "08 Mar 2026", "why": "Hama · 3/3",   "acc": "BCA ****4421" },
+  { "n": "Ibu Painem",    "amt": "Rp 5.940.000", "when": "08 Mar 2026", "why": "Hama · 3/3",   "acc": "BNI ****6612" },
+  { "n": "Bapak Sutarno", "amt": "Rp 4.620.000", "when": "14 Feb 2026", "why": "Hama · 3/3",   "acc": "BRI ****2391" },
+  { "n": "Ibu Sumini",    "amt": "Rp 4.140.000", "when": "14 Feb 2026", "why": "Hama · 3/3",   "acc": "BCA ****7704" },
+  { "n": "Bapak Tugiman", "amt": "Rp 3.000.000", "when": "03 Feb 2026", "why": "Banjir · 3/3", "acc": "BNI ****5588" }
+]

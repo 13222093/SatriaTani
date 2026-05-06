@@ -1,0 +1,204 @@
+/* Satria Tani — Design Tokens (locked: Civic Authority typography) */
+:root {
+  /* Surfaces */
+  --bone: #f5f3ee;
+  --bone-2: #ebe7dc;
+  --bone-3: #ddd6c5;
+  --parch: #F4EDD8;            /* editorial / evidence panels */
+
+  /* Ink — institutional navy is primary */
+  --navy: #0E1A2B;
+  --navy-2: #1c2c40;
+  --navy-3: #3a4a5e;
+  --ink: #0E1A2B;              /* alias */
+  --ink-2: #1c2c40;
+  --ink-3: #3a4a5e;
+  --muted: #5a6a73;
+  --muted-2: #8a96a0;
+
+  /* Semantic — locked usage */
+  --terracotta: #C2502A;       /* alerts, fired triggers, basis-risk, destructive */
+  --terracotta-2: #9a3e1f;
+  --terracotta-soft: #f0d4c4;
+
+  --emerald: #1F6B3A;          /* confirmed, payout success, healthy, positive CTA */
+  --emerald-2: #155028;
+  --emerald-soft: #cfe4d6;
+  --sage: var(--emerald);      /* aliases for legacy refs */
+  --sage-2: var(--emerald);
+  --sage-soft: var(--emerald-soft);
+
+  --gold: #B8860B;             /* Pranata Mangsa, cultural triggers, signatures */
+  --gold-2: #8a6308;
+  --gold-soft: #f0dfa8;
+
+  --danger: var(--terracotta);
+  --line: #d8d2c0;
+  --line-2: #c2b89f;
+  --line-navy: rgba(14,26,43,0.14);
+
+  /* Type — Opsi C · Civic Authority */
+  --f-display: 'Fraunces', 'Times New Roman', serif;
+  --f-sans: 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* Type scale */
+  --t-kpi: 40px;               /* Fraunces 400 */
+  --t-page-title: 26px;        /* Fraunces 400 */
+  --t-section: 16px;           /* Plex Sans 600 */
+  --t-body: 14px;              /* Plex Sans 400 */
+  --t-body-sm: 12px;
+  --t-eyebrow: 10px;           /* Plex Mono 500, 0.18em, upper */
+  --t-tabular: 13px;           /* Plex Mono */
+
+  /* Geometry */
+  --r-card: 4px;
+  --r-control: 4px;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bone);
+  color: var(--ink);
+  font-family: var(--f-sans);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Batik-derived geometric pattern (subtle) */
+.batik-divider {
+  height: 14px;
+  background-image:
+    repeating-linear-gradient(45deg,
+      transparent 0 6px,
+      var(--ink) 6px 7px,
+      transparent 7px 12px),
+    repeating-linear-gradient(-45deg,
+      transparent 0 6px,
+      var(--ink) 6px 7px,
+      transparent 7px 12px);
+  opacity: 0.18;
+}
+.batik-band {
+  background-image:
+    radial-gradient(circle at 4px 4px, var(--ink) 1px, transparent 1.5px),
+    radial-gradient(circle at 12px 12px, var(--ink) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  opacity: 0.10;
+}
+.kawung {
+  background-image:
+    radial-gradient(circle at 0 0, transparent 7px, var(--ink) 7.5px, transparent 8.5px),
+    radial-gradient(circle at 16px 0, transparent 7px, var(--ink) 7.5px, transparent 8.5px),
+    radial-gradient(circle at 0 16px, transparent 7px, var(--ink) 7.5px, transparent 8.5px),
+    radial-gradient(circle at 16px 16px, transparent 7px, var(--ink) 7.5px, transparent 8.5px);
+  background-size: 16px 16px;
+  opacity: 0.10;
+}
+
+/* Common controls */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 22px; padding: 0 8px;
+  border-radius: var(--r-control);
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--line);
+  background: var(--bone);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.chip.ok    { background: var(--emerald-soft); border-color: var(--emerald); color: var(--emerald-2); }
+.chip.warn  { background: var(--gold-soft); border-color: var(--gold-2); color: var(--gold-2); }
+.chip.fire  { background: var(--terracotta-soft); border-color: var(--terracotta); color: var(--terracotta-2); }
+.chip.ink   { background: var(--navy); border-color: var(--navy); color: var(--bone); }
+
+/* Card — institutional, sharp, hairline */
+.card {
+  background: #fff;
+  border: 1px solid var(--line-navy);
+  border-radius: var(--r-card);
+}
+.card-parch { background: var(--parch); border: 1px solid var(--line-navy); border-radius: var(--r-card); }
+.card-navy  { background: var(--navy); color: var(--bone); border: 1px solid var(--navy); border-radius: var(--r-card); }
+
+/* Button hierarchy */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 32px; padding: 0 14px;
+  border-radius: var(--r-control);
+  font-family: var(--f-sans);
+  font-size: 12.5px; font-weight: 500;
+  letter-spacing: 0.005em;
+  border: 1px solid transparent;
+  cursor: pointer; white-space: nowrap;
+  transition: background 120ms ease;
+}
+.btn-primary    { background: var(--navy); color: var(--bone); border-color: var(--navy); }
+.btn-secondary  { background: transparent; color: var(--navy); border-color: var(--navy); }
+.btn-positive   { background: var(--emerald); color: #fff; border-color: var(--emerald); }
+.btn-destructive{ background: var(--terracotta); color: #fff; border-color: var(--terracotta); }
+.btn-cultural   { background: transparent; color: var(--gold-2); border-color: var(--gold-2); }
+.btn-sm { height: 26px; padding: 0 10px; font-size: 11.5px; }
+
+/* KPI card pattern */
+.kpi {
+  background: #fff;
+  border: 1px solid var(--line-navy);
+  border-radius: var(--r-card);
+  padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.kpi-eyebrow {
+  font-family: var(--f-mono); font-size: var(--t-eyebrow);
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+  font-weight: 500;
+}
+.kpi-value {
+  font-family: var(--f-display); font-size: 32px; font-weight: 400;
+  letter-spacing: -0.015em; line-height: 1.0; color: var(--navy);
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.kpi-context {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11.5px; color: var(--muted); margin-top: 4px;
+}
+.kpi-delta-pos { color: var(--emerald); font-weight: 600; }
+.kpi-delta-neg { color: var(--terracotta); font-weight: 600; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.mono { font-family: var(--f-mono); font-feature-settings: "tnum"; }
+.tnum { font-variant-numeric: tabular-nums; }
+.serif { font-family: var(--f-display); font-feature-settings: "ss01"; }
+
+/* Tooltip for cultural-term glossary */
+.gl {
+  border-bottom: 1px dotted var(--terracotta);
+  cursor: help;
+  position: relative;
+}
+.gl:hover::after {
+  content: attr(data-en);
+  position: absolute;
+  left: 0; top: calc(100% + 6px);
+  background: var(--ink); color: var(--bone);
+  padding: 6px 10px;
+  font-family: var(--f-sans);
+  font-size: 11px;
+  font-weight: 400;
+  white-space: nowrap;
+  border-radius: 2px;
+  z-index: 100;
+  letter-spacing: 0;
+}
+
+button { font-family: inherit; cursor: pointer; }
+
+/* Compact density toggle hook */
+[data-density="compact"] { font-size: 13px; }
+[data-density="compact"] .row { padding-top: 6px; padding-bottom: 6px; }

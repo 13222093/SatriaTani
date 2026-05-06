@@ -1,0 +1,54 @@
+{
+  "geo": {
+    "name": "Geospasial",
+    "fired": true,
+    "confidence": 0.94,
+    "metric": "NDVI Δ",
+    "delta": "−0.41",
+    "narr": "Sentinel-2 NDVI rata-rata pada poligon sawah turun dari 0.71 (pra-kejadian) menjadi 0.30 dalam 72 jam. Sentinel-1 SAR menunjukkan kenaikan backscatter +6.2 dB → permukaan tergenang.",
+    "sources": [
+      "Sentinel-2 L2A · 2026-04-15",
+      "Sentinel-2 L2A · 2026-04-22",
+      "Sentinel-1 GRD · 2026-04-21"
+    ]
+  },
+  "peer": {
+    "name": "Atestasi Antar-Desa",
+    "fired": true,
+    "confidence": 0.86,
+    "metric": "Suara",
+    "delta": "11 / 14",
+    "narr": "Empat belas petani dari desa tetangga (Trucuk, Cawas, Bayat) diundang acak. Sebelas mengonfirmasi banjir telah merendam petak Sidorejo > 48 jam. Satu menolak, dua tidak merespons dalam jendela 24 jam.",
+    "voters": [
+      { "v": "Trucuk", "n": "Pak Wiryo",  "ok": true,  "ts": "04-21 08:12" },
+      { "v": "Trucuk", "n": "Bu Sumiyem", "ok": true,  "ts": "04-21 09:04" },
+      { "v": "Cawas",  "n": "Pak Karto",  "ok": true,  "ts": "04-21 09:18" },
+      { "v": "Cawas",  "n": "Pak Heru",   "ok": true,  "ts": "04-21 10:30" },
+      { "v": "Bayat",  "n": "Bu Painem",  "ok": true,  "ts": "04-21 11:02" },
+      { "v": "Bayat",  "n": "Pak Slamet", "ok": false, "ts": "04-21 11:40" },
+      { "v": "Trucuk", "n": "Pak Tarno",  "ok": true,  "ts": "04-21 13:11" },
+      { "v": "Cawas",  "n": "Bu Tarmi",   "ok": true,  "ts": "04-21 14:00" },
+      { "v": "Bayat",  "n": "Pak Yatno",  "ok": true,  "ts": "04-21 15:22" },
+      { "v": "Trucuk", "n": "Pak Marto",  "ok": true,  "ts": "04-21 16:08" },
+      { "v": "Cawas",  "n": "Bu Sri",     "ok": true,  "ts": "04-21 17:45" },
+      { "v": "Bayat",  "n": "Pak Joyo",   "ok": true,  "ts": "04-21 19:11" },
+      { "v": "Trucuk", "n": "Bu Lasmi",   "ok": null,  "ts": "—" },
+      { "v": "Cawas",  "n": "Pak Bejo",   "ok": null,  "ts": "—" }
+    ]
+  },
+  "pranata": {
+    "name": "Pranata Mangsa",
+    "fired": true,
+    "confidence": 0.78,
+    "metric": "Indikator",
+    "delta": "4 / 5",
+    "narr": "Periode aktif: Mangsa Kanem (musim hujan deras). Empat dari lima bio-indikator yang dilaporkan petani dalam radius 25 km menyimpang ke arah curah hujan ekstrem: kemunculan laron massal di luar siklus, randu berbuah dini, embun pagi tebal abnormal, suhu malam +2.4°C dari rata-rata 20-tahun.",
+    "indicators": [
+      { "k": "Kemunculan laron",  "state": "anomali", "detail": "massal, di luar siklus" },
+      { "k": "Pembungaan randu",  "state": "anomali", "detail": "dini · 11 hari" },
+      { "k": "Embun pagi",        "state": "anomali", "detail": "tebal abnormal" },
+      { "k": "Suhu malam",        "state": "anomali", "detail": "+2.4°C vs 20-th rerata" },
+      { "k": "Kicau prenjak",     "state": "normal",  "detail": "pola sesuai mangsa" }
+    ]
+  }
+}

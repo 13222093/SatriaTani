@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "app.jsx",
+    "design-canvas.jsx",
+    "tweaks-panel.jsx",
+    "ios-frame.jsx",
+    "components/admin.jsx",
+    "components/cooperative.jsx",
+    "components/farmer.jsx",
+    "components/primitives.jsx",
+    "components/type-scales.jsx",
+    "components/unified-header.jsx",
+    "components/verifier.jsx"
+  ]
+}

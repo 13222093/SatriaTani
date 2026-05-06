@@ -1,0 +1,20 @@
+{
+  "id": "STN-2026-04-1183",
+  "policyId": "POL-JT-7741-26A",
+  "farmerName": "Bapak Suparjo",
+  "farmerId": "FRM-7741-0291",
+  "village": "Sidorejo",
+  "district": "Klaten",
+  "province": "Jawa Tengah",
+  "area": 1.4,
+  "varietal": "Ciherang",
+  "plantedAt": "2026-01-08",
+  "event": "Banjir bandang · curah hujan ekstrem",
+  "eventDate": "2026-04-19",
+  "coverage": 9240000,
+  "triggeredAt": "2026-04-22 06:14 WIB",
+  "block": "0xa83f…b219",
+  "bankAccount": "BCA ****8842",
+  "processingTime": "3 hari, 2 jam",
+  "autpComparison": "vs AUTP rerata: 87 hari"
+}

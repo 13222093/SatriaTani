@@ -1,0 +1,14 @@
+[
+  { "id": "klaten",     "name": "Klaten · Sidorejo",  "x": 605, "y": 198, "sev": "high", "count": 42, "kind": "banjir",     "fired": "3/3", "exposure": "Rp 388 jt" },
+  { "id": "demak",      "name": "Demak",              "x": 615, "y": 168, "sev": "high", "count": 38, "kind": "banjir",     "fired": "3/3", "exposure": "Rp 351 jt" },
+  { "id": "banyuwangi", "name": "Banyuwangi",         "x": 870, "y": 250, "sev": "high", "count": 31, "kind": "hama",       "fired": "3/3", "exposure": "Rp 287 jt" },
+  { "id": "indramayu",  "name": "Indramayu",          "x": 470, "y": 175, "sev": "med",  "count": 24, "kind": "banjir",     "fired": "2/3", "exposure": "Rp 222 jt" },
+  { "id": "jember",     "name": "Jember",             "x": 815, "y": 245, "sev": "med",  "count": 22, "kind": "hama",       "fired": "2/3", "exposure": "Rp 204 jt" },
+  { "id": "karawang",   "name": "Karawang",           "x": 410, "y": 188, "sev": "med",  "count": 18, "kind": "banjir",     "fired": "2/3", "exposure": "Rp 167 jt" },
+  { "id": "cirebon",    "name": "Cirebon",            "x": 502, "y": 188, "sev": "med",  "count": 16, "kind": "kekeringan", "fired": "1/3", "exposure": "Rp 148 jt" },
+  { "id": "bantul",     "name": "Bantul",             "x": 668, "y": 235, "sev": "med",  "count": 14, "kind": "banjir",     "fired": "1/3", "exposure": "Rp 130 jt" },
+  { "id": "pekalongan", "name": "Pekalongan",         "x": 555, "y": 175, "sev": "low",  "count":  9, "kind": "banjir",     "fired": "1/3", "exposure": "Rp 84 jt"  },
+  { "id": "madiun",     "name": "Madiun",             "x": 740, "y": 215, "sev": "low",  "count":  7, "kind": "kekeringan", "fired": "1/3", "exposure": "Rp 65 jt"  },
+  { "id": "sukabumi",   "name": "Sukabumi",           "x": 380, "y": 232, "sev": "low",  "count":  6, "kind": "banjir",     "fired": "1/3", "exposure": "Rp 56 jt"  },
+  { "id": "tegal",      "name": "Tegal",              "x": 528, "y": 178, "sev": "low",  "count":  5, "kind": "kekeringan", "fired": "1/3", "exposure": "Rp 47 jt"  }
+]

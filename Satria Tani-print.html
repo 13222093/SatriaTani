@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<title>Satria Tani — PDF</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="tokens.css" />
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background: #e8e3d4;
+    font-family: var(--f-sans, Inter, sans-serif);
+    color: var(--ink, #1a2e2a);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    background: var(--bone, #f5f3ee);
+    margin: 24px auto;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.08);
+    overflow: hidden;
+    page-break-after: always;
+    break-after: page;
+    break-inside: avoid;
+    position: relative;
+  }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+
+  .page-frame {
+    /* The artboard sits at native pixels, scaled per-page via inline style */
+    transform-origin: top left;
+  }
+
+  .page-caption {
+    position: absolute;
+    top: 8px; left: 12px;
+    font-family: var(--f-mono, 'IBM Plex Mono', monospace);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(26,46,42,0.45);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* Mobile pages — black canvas around device, like a deck slide */
+  .page.mobile {
+    background: #1a2e2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .page.mobile .page-caption { color: rgba(245,243,238,0.5); }
+
+  @page { size: A4 landscape; margin: 0.4cm; }
+
+  @media print {
+    html, body { background: #fff; }
+    .page {
+      margin: 0;
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="pages"></div>
+
+<!-- Reuse the same component scripts -->
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="components/primitives.jsx"></script>
+<script type="text/babel" src="components/verifier.jsx"></script>
+<script type="text/babel" src="components/cooperative.jsx"></script>
+<script type="text/babel" src="components/admin.jsx"></script>
+<script type="text/babel" src="components/farmer.jsx"></script>
+
+<script type="text/babel">
+  // A4 landscape inner area at 96dpi ≈ 1110 × 770 with 0.4cm margins.
+  // We pick a target page width and scale each artboard to fit.
+  const A4_W = 1110;   // px target page width
+  const A4_H = 770;    // px target page height (landscape)
+
+  const PAGES = [
+    { id: 'admin',    label: '00 · Dasbor Pusat · Pulau Jawa',           w: 1640, h: 1500, kind: 'desktop', node: <AdminDashboard density="comfortable" /> },
+    { id: 'verifier', label: '01 · Konsol Verifier · OJK',                w: 1480, h: 1900, kind: 'desktop', node: <VerifierConsole density="comfortable" /> },
+    { id: 'coop',     label: '02 · Dasbor Koperasi',                      w: 1320, h: 1100, kind: 'desktop', node: <CooperativeDashboard density="comfortable" /> },
+    { id: 'wa-on',    label: 'A · WhatsApp · Onboarding & status',        w: 390,  h: 800,  kind: 'mobile',  node: <IOSDevice width={390} height={800}><WAOnboardingScreen /></IOSDevice> },
+    { id: 'wa-ob',    label: 'B · WhatsApp · Pengamatan harian',          w: 390,  h: 800,  kind: 'mobile',  node: <IOSDevice width={390} height={800}><WAObservationScreen /></IOSDevice> },
+    { id: 'wa-at',    label: 'C · WhatsApp · Atestasi antar-desa',        w: 390,  h: 800,  kind: 'mobile',  node: <IOSDevice width={390} height={800}><WAAttestationScreen /></IOSDevice> },
+    { id: 'wa-pa',    label: 'D · WhatsApp · Pencairan klaim',            w: 390,  h: 800,  kind: 'mobile',  node: <IOSDevice width={390} height={800}><WAPayoutScreen /></IOSDevice> },
+  ];
+
+  function Page({ p }) {
+    // Scale artboard to fit page area
+    const padX = p.kind === 'mobile' ? 0 : 12;
+    const padY = p.kind === 'mobile' ? 0 : 24; // extra room for caption
+    const availW = A4_W - padX*2;
+    const availH = A4_H - padY*2;
+    const scale = Math.min(availW / p.w, availH / p.h);
+    const scaledW = p.w * scale;
+    const scaledH = p.h * scale;
+    return (
+      <div className={`page ${p.kind === 'mobile' ? 'mobile' : ''}`}
+           style={{ width: A4_W, height: A4_H }}>
+        <div className="page-caption">{p.label}</div>
+        <div style={{
+          width: A4_W, height: A4_H,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div className="page-frame" style={{
+            width: p.w, height: p.h,
+            transform: `scale(${scale})`,
+            transformOrigin: 'center center',
+            // Use a positioning trick: wrap in centered flex; transform from center keeps it centered
+          }}>
+            {p.node}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function PrintApp() {
+    return <>{PAGES.map(p => <Page key={p.id} p={p} />)}</>;
+  }
+
+  ReactDOM.createRoot(document.getElementById('pages')).render(<PrintApp />);
+
+  // Auto-print after fonts + JSX are ready
+  (async function autoPrint() {
+    try { await document.fonts.ready; } catch (e) {}
+    setTimeout(() => { window.print(); }, 800);
+  })();
+</script>
+
+</body>
+</html>

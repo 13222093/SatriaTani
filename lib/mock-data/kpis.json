@@ -1,0 +1,8 @@
+[
+  { "eyebrow": "Polis Aktif",         "value": "184.220",      "delta": "+12,4%", "dir": "pos", "context": "MoM · target 200K Q3",       "seed": 1,  "trend":  0.20, "color": "navy" },
+  { "eyebrow": "Lahan Tertanggung",   "value": "246.580 ha",   "delta": "+8,1%",  "dir": "pos", "context": "MoM · ≈ 4,1% sawah Jawa",    "seed": 3,  "trend":  0.15, "color": "navy" },
+  { "eyebrow": "Premi Terkumpul",     "value": "Rp 184,2 Mrd", "delta": "+11,2%", "dir": "pos", "context": "YTD vs target Rp 220 Mrd",   "seed": 5,  "trend":  0.18, "color": "navy" },
+  { "eyebrow": "Pencairan YTD",       "value": "Rp 41,8 Mrd",  "delta": "+18,6%", "dir": "pos", "context": "1.207 klaim · vs Apr",       "seed": 7,  "trend":  0.45, "color": "terracotta", "alert": true },
+  { "eyebrow": "Loss Ratio",          "value": "22,7%",        "delta": "−1,2pp", "dir": "pos", "context": "WoW · sehat (target ≤70%)",  "seed": 9,  "trend": -0.18, "color": "emerald" },
+  { "eyebrow": "Rerata Waktu Bayar",  "value": "2,8 hari",     "delta": "−0,3h",  "dir": "pos", "context": "WoW · vs AUTP 87 hari",      "seed": 11, "trend": -0.22, "color": "emerald" }
+]

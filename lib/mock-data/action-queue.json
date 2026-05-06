@@ -1,0 +1,10 @@
+[
+  { "id": "STN-2026-04-1183", "region": "Klaten",     "village": "Sidorejo",   "fired": "3/3", "age": "4 jam",  "sev": "high", "ctx": "Banjir bandang · 42 polis · Rp 388 jt exposure",   "kind": "banjir" },
+  { "id": "STN-2026-04-1162", "region": "Demak",      "village": "Wonosalam",  "fired": "3/3", "age": "6 jam",  "sev": "high", "ctx": "Rob pesisir · 38 polis · Rp 351 jt",               "kind": "banjir" },
+  { "id": "STN-2026-04-1098", "region": "Banyuwangi", "village": "Glagah",     "fired": "3/3", "age": "11 jam", "sev": "high", "ctx": "Wereng coklat · 31 polis · Rp 287 jt",            "kind": "hama" },
+  { "id": "STN-2026-04-1071", "region": "Indramayu",  "village": "Sukra",      "fired": "2/3", "age": "14 jam", "sev": "med",  "ctx": "Banjir sungai · 24 polis · Rp 222 jt · menunggu Mangsa", "kind": "banjir" },
+  { "id": "STN-2026-04-1042", "region": "Jember",     "village": "Sumberbaru", "fired": "2/3", "age": "18 jam", "sev": "med",  "ctx": "Wereng · 22 polis · Rp 204 jt · 9/12 atestasi",   "kind": "hama" },
+  { "id": "STN-2026-04-1018", "region": "Karawang",   "village": "Cilebar",    "fired": "2/3", "age": "22 jam", "sev": "med",  "ctx": "Banjir muara · 18 polis · Rp 167 jt",             "kind": "banjir" },
+  { "id": "STN-2026-04-0987", "region": "Cirebon",    "village": "Gegesik",    "fired": "1/3", "age": "1 hari", "sev": "low",  "ctx": "NDVI turun · 16 polis · perlu konfirmasi tetangga","kind": "kekeringan" },
+  { "id": "STN-2026-04-0954", "region": "Bantul",     "village": "Pundong",    "fired": "1/3", "age": "2 hari", "sev": "low",  "ctx": "Curah hujan tinggi · 14 polis · belum tergenang",  "kind": "banjir" }
+]

@@ -1,0 +1,10 @@
+[
+  { "t": "2026-04-19 04:22", "who": "BMKG",         "what": "Peringatan curah hujan ekstrem · Klaten",                "hash": "0x9c1a…7b04" },
+  { "t": "2026-04-21 02:00", "who": "Sentinel-1",   "what": "Akuisisi citra SAR · pass desc",                         "hash": "0x4d7e…aa12" },
+  { "t": "2026-04-21 06:30", "who": "Protokol",     "what": "Trigger Geospasial dievaluasi → TERPICU",                "hash": "0xb22f…0918" },
+  { "t": "2026-04-21 08:12", "who": "Protokol",     "what": "Undangan atestasi acak ke 14 petani tetangga",           "hash": "0x77a3…ee2c" },
+  { "t": "2026-04-21 19:11", "who": "Protokol",     "what": "Trigger Atestasi dievaluasi → TERPICU (11/14)",          "hash": "0xe091…3344" },
+  { "t": "2026-04-22 05:30", "who": "Protokol",     "what": "Bio-indikator agregat dievaluasi → TERPICU (4/5)",       "hash": "0x12ba…f0d1" },
+  { "t": "2026-04-22 06:14", "who": "Protokol",     "what": "Konvergensi 3-dari-3 · Pencairan disetujui",             "hash": "0xa83f…b219" },
+  { "t": "2026-04-22 06:18", "who": "Bank Mandiri", "what": "Transfer Rp 9.240.000 → rekening petani",                "hash": "0xff31…7720" }
+]

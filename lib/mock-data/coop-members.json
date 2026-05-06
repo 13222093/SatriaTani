@@ -1,0 +1,14 @@
+[
+  { "id": "0288", "n": "Bapak Mulyono",  "ha": 1.2, "status": "aktif", "voucher": "disalurkan", "payout": "—" },
+  { "id": "0289", "n": "Ibu Sariyem",    "ha": 0.8, "status": "aktif", "voucher": "disalurkan", "payout": "—" },
+  { "id": "0290", "n": "Bapak Wagiman",  "ha": 2.1, "status": "aktif", "voucher": "disalurkan", "payout": "—" },
+  { "id": "0291", "n": "Bapak Suparjo",  "ha": 1.4, "status": "klaim", "voucher": "disalurkan", "payout": "Rp 9.240.000" },
+  { "id": "0292", "n": "Ibu Tukinem",    "ha": 0.6, "status": "aktif", "voucher": "disalurkan", "payout": "—" },
+  { "id": "0293", "n": "Bapak Sutrisno", "ha": 1.8, "status": "aktif", "voucher": "tertunda",   "payout": "—" },
+  { "id": "0294", "n": "Bapak Darto",    "ha": 1.0, "status": "aktif", "voucher": "disalurkan", "payout": "—" },
+  { "id": "0295", "n": "Ibu Marni",      "ha": 0.9, "status": "aktif", "voucher": "disalurkan", "payout": "—" },
+  { "id": "0296", "n": "Bapak Karman",   "ha": 1.3, "status": "klaim", "voucher": "disalurkan", "payout": "Rp 8.580.000" },
+  { "id": "0297", "n": "Bapak Joko",     "ha": 0.7, "status": "aktif", "voucher": "tertunda",   "payout": "—" },
+  { "id": "0298", "n": "Ibu Painem",     "ha": 1.1, "status": "aktif", "voucher": "disalurkan", "payout": "—" },
+  { "id": "0299", "n": "Bapak Suyatno",  "ha": 1.6, "status": "aktif", "voucher": "disalurkan", "payout": "—" }
+]
