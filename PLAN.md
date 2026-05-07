@@ -4,7 +4,7 @@
 
 **Deadline:** 2026-05-06 (today). Hackathon submission window.
 
-**Status: Port complete. Ready for Vercel deploy + GitHub push.**
+**Status: Port complete + map honesty pass landed (`/klaim/[id]` now uses Leaflet on real Klaten coords). Ready for Vercel deploy + GitHub push.**
 
 ---
 
@@ -28,7 +28,7 @@ Three product surfaces + one storyboard:
 | Decision | What we did | Why |
 |---|---|---|
 | **Farmer screens** | Shipped as `/storyboard` (view-only gallery) | Code already existed in [components/farmer.jsx](components/farmer.jsx); marginal cost ~45 min; gives demo video live pixels instead of static PNGs. |
-| **Map architecture** | Kept hand-drawn SVG, deferred MapLibre to post-MVP | The source-of-truth `JavaMap` in [admin.jsx](components/admin.jsx) places hotspots in SVG-space coordinates (`x: 605, y: 198`), not lat/lng. Adopting MapLibre = rebuild from scratch (6–10h) with high visual-drift risk vs. CLAUDE.md's "every deviation = bug" rule. |
+| **Map architecture** | Mixed: SVG `JavaMap` retained; `ParcelMap` + `VillageMap` ported to Leaflet + real OSM/Esri tiles | Original decision was full-SVG. Reversed for the two parcel-scale maps where stylized geometry reads as fake — judges with Klaten knowledge would notice. Country-overview `JavaMap` stays SVG (defensible as illustration). See "Map honesty pass" section below. |
 | **Sans-serif font** | Used Inter (not IBM Plex Sans) | [tokens.css](tokens.css) declared `--f-sans: 'IBM Plex Sans'` but the prototype HTML only loaded Inter from Google Fonts. Plex Sans never reached the browser. Using Inter preserves the visual that's been signed off; switching to Plex Sans would change the rendered look. |
 
 All three diverged from CLAUDE.MD's stated assumptions; CLAUDE.MD itself is left unchanged as the original product brief — see this PLAN.md and the README for the locked decisions.
@@ -159,8 +159,8 @@ Optional cleanup pass before final deploy.
 
 ## Risk register (final)
 
-### Risk 1 — Map architecture mismatch with CLAUDE.MD ⚠️ Accepted, documented
-CLAUDE.MD says MapLibre; source has hand-drawn SVG. Decision: kept SVG. Documented as roadmap in README.
+### Risk 1 — Map architecture mismatch with CLAUDE.MD ⚠️ Partially resolved
+CLAUDE.MD says MapLibre; source had hand-drawn SVG. Compromise: SVG kept for `JavaMap` (national hotspot overview); Leaflet + real tiles adopted for `ParcelMap` (Esri satellite over Sidorejo bbox) and `VillageMap` (OSM street with real Trucuk/Cawas/Bayat coords). MapLibre still on roadmap.
 
 ### Risk 2 — JSX→TSX scope ✅ Resolved within budget
 Total port: ~3500 lines of TSX. Build time clean on every phase smoke test.
@@ -170,3 +170,22 @@ No top-level `window`/`document` references in any ported component. All state l
 
 ### Risk 4 — npm install ✅ Resolved
 Network worked, dependencies installed cleanly, no version resolution failures.
+
+---
+
+## Map honesty pass (post-initial-port addendum)
+
+**Trigger:** review caught that the original SVG `ParcelMap` and `VillageMap` placed everything in image-space coordinates. The "Sidorejo" coord overlay (`6.9847°S 110.5912°E`) actually lands in Boyolali, not Klaten — exactly the kind of detail a local judge would notice.
+
+**Reference:** [Floodzy/components/map/FloodMap.tsx](Floodzy/components/map/FloodMap.tsx) — same author's separate project that uses real Leaflet + OSM/Esri tiles with `dynamic({ ssr: false })` import pattern.
+
+**What changed:**
+- Added `leaflet@1.9.4`, `react-leaflet@4.2.1`, `@types/leaflet` to [package.json](package.json).
+- Added `import 'leaflet/dist/leaflet.css'` in [app/layout.tsx](app/layout.tsx).
+- New file [globals.d.ts](globals.d.ts) — declares `*.css` modules to satisfy strict TS.
+- New file [lib/geo.ts](lib/geo.ts) — `SIDOREJO_CENTER` (real lat/lng for Desa Sidorejo, Kec. Trucuk, Kab. Klaten), `PARCEL_BOUNDS` (~120m × 120m bbox = 1.4 ha hero claim), `cellBounds(row, col)` helper, `NEIGHBOR_VILLAGES` (real Trucuk/Cawas/Bayat coords), 14-attester registry with verdict (approve/pending/reject), deterministic NDVI seed preserved from old SVG.
+- New file [components/verifier/ParcelMapLeaflet.tsx](components/verifier/ParcelMapLeaflet.tsx) — Esri satellite tile layer + 54 NDVI `Rectangle`s + dashed flood-outline overlay. LayersControl swap to OSM street.
+- New file [components/verifier/VillageMapLeaflet.tsx](components/verifier/VillageMapLeaflet.tsx) — OSM street tiles + Sidorejo `CircleMarker` (terracotta, target) + 3 neighbour village markers + 14 attester dots + 25 km radius `Circle` + dashed `Polyline`s connecting villages to target.
+- [components/verifier/VerifierConsole.tsx](components/verifier/VerifierConsole.tsx): deleted old `ParcelMap` (~100 lines SVG) and `VillageMap` (~85 lines SVG). Added `dynamic({ ssr: false })` imports of the two new components with bone-coloured loading placeholders. Updated coord overlay text from `6.9847°S · 110.5912°E · ZOOM 16` to the real `7.6855°S · 110.6678°E · ZOOM 18`. Wrapped `<VillageMap />` callsite in a `height: 220` container so Leaflet has a layout box.
+
+**Out of scope of this pass (still SVG):** `JavaMap` in [components/admin/AdminDashboard.tsx](components/admin/AdminDashboard.tsx) and the country-level hotspots in [lib/mock-data/hotspots.json](lib/mock-data/hotspots.json) (still SVG-space `x,y`). National-overview SVG is defensible as illustration; parcel-scale SVG was not.

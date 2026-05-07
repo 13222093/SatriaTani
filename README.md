@@ -49,7 +49,7 @@ Akan dibuka pada `http://localhost:3000` dan otomatis redirect ke `/pusat-nasion
 - **Styling:** Inline styles + `app/globals.css` design tokens (CSS variables). No Tailwind/shadcn — design system was hand-authored before Tailwind would have been introduced; preserving fidelity to the source design.
 - **Fonts:** Fraunces (display), Inter (sans), IBM Plex Mono (mono) — loaded via `next/font/google`.
 - **Charts:** Inline SVG with deterministic generators (sin/cos). No Recharts dependency.
-- **Map:** Hand-drawn Pulau Jawa SVG with hand-placed hotspot pins. MapLibre is roadmap.
+- **Map:** Mixed. National `JavaMap` (Pusat Nasional) is hand-drawn SVG. Parcel-scale `ParcelMap` (Verifier Console) uses Leaflet + Esri World Imagery satellite tiles over the real Sidorejo, Klaten bounding box. Cross-village `VillageMap` uses Leaflet + OSM street tiles with real Trucuk/Cawas/Bayat coordinates and a 25 km audit radius. MapLibre / vector tiles still on roadmap.
 - **Mock data:** JSON in `lib/mock-data/`. No database.
 
 ## Hero claim — apa yang dilihat di demo

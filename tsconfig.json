@@ -21,6 +21,7 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": [
     "node_modules",
+    "Floodzy",
     "app.jsx",
     "design-canvas.jsx",
     "tweaks-panel.jsx",

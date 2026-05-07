@@ -4,6 +4,7 @@
    Single-claim view: parcel map + NDVI/SAR + peer attestation + Pranata Mangsa. */
 
 import { useState, type CSSProperties, type ReactNode } from 'react';
+import dynamic from 'next/dynamic';
 import { UnifiedHeader } from '@/components/UnifiedHeader';
 import { SectionHead } from '@/components/primitives/SectionHead';
 import { StatCell } from '@/components/primitives/StatCell';
@@ -12,6 +13,51 @@ import { rupiah } from '@/lib/format';
 import claim from '@/lib/mock-data/claim.json';
 import triggersRaw from '@/lib/mock-data/triggers.json';
 import auditRaw from '@/lib/mock-data/audit-trail.json';
+
+const ParcelMap = dynamic(() => import('./ParcelMapLeaflet'), {
+  ssr: false,
+  loading: () => (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'var(--bone)',
+        fontFamily: 'var(--f-mono)',
+        fontSize: 10,
+        letterSpacing: '0.08em',
+        opacity: 0.6,
+      }}
+    >
+      memuat citra satelit…
+    </div>
+  ),
+});
+
+const VillageMap = dynamic(() => import('./VillageMapLeaflet'), {
+  ssr: false,
+  loading: () => (
+    <div
+      style={{
+        width: '100%',
+        height: 220,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'var(--ink-3)',
+        fontFamily: 'var(--f-mono)',
+        fontSize: 10,
+        letterSpacing: '0.08em',
+        background: 'var(--bone-2)',
+        border: '1px solid var(--line)',
+      }}
+    >
+      memuat peta…
+    </div>
+  ),
+});
 
 type Voter = { v: string; n: string; ok: boolean | null; ts: string };
 type Indicator = { k: string; state: 'anomali' | 'normal'; detail: string };
@@ -196,109 +242,6 @@ function TriggerHeader({
         </div>
       </div>
     </div>
-  );
-}
-
-function ParcelMap() {
-  const cols = 9;
-  const rows = 6;
-  type Cell = { r: number; c: number; ndvi: number; flooded: boolean };
-  const cells: Cell[] = [];
-  let seed = 42;
-  const rand = () => {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / 233280;
-  };
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      cells.push({ r, c, ndvi: 0.4 + rand() * 0.5, flooded: false });
-    }
-  }
-  const highlight = new Set(['2-3', '2-4', '3-3', '3-4', '3-5', '4-4']);
-  cells.forEach((c) => {
-    if (highlight.has(`${c.r}-${c.c}`)) {
-      c.flooded = true;
-      c.ndvi = 0.22;
-    }
-  });
-
-  return (
-    <svg
-      viewBox="0 0 540 220"
-      preserveAspectRatio="none"
-      width="100%"
-      height="100%"
-      style={{ display: 'block' }}
-    >
-      <rect width="540" height="220" fill="#1a2e2a" />
-      <path
-        d="M 0 38 C 80 60, 160 20, 260 50 S 460 80, 540 70 L 540 92 C 460 102, 360 70, 260 80 S 80 88, 0 60 Z"
-        fill="#3a5e6e"
-        opacity="0.6"
-      />
-      <path
-        d="M 0 50 C 80 70, 160 30, 260 60 S 460 90, 540 80"
-        stroke="#4a7a8a"
-        strokeWidth="1"
-        fill="none"
-        opacity="0.7"
-      />
-      <path d="M 0 165 L 540 145" stroke="#7a6a4a" strokeWidth="1.5" fill="none" />
-      <path
-        d="M 0 165 L 540 145"
-        stroke="#d4a84b"
-        strokeWidth="0.4"
-        fill="none"
-        strokeDasharray="4 4"
-        opacity="0.5"
-      />
-
-      {cells.map((c) => {
-        const w = 540 / cols;
-        const h = 220 / rows;
-        const x = c.c * w + 2;
-        const y = c.r * h + 2;
-        const ww = w - 4;
-        const hh = h - 4;
-        let fill: string;
-        if (c.flooded) fill = '#c4633c';
-        else if (c.ndvi > 0.65) fill = '#7bc44a';
-        else if (c.ndvi > 0.5) fill = '#a8c468';
-        else if (c.ndvi > 0.4) fill = '#d4a84b';
-        else fill = '#a08a4a';
-        return <rect key={`${c.r}-${c.c}`} x={x} y={y} width={ww} height={hh} fill={fill} opacity={0.85} />;
-      })}
-
-      <rect
-        x={2 * 60 + 2}
-        y={2 * 36.6 + 2}
-        width={3 * 60 - 4}
-        height={3 * 36.6 - 4}
-        fill="none"
-        stroke="#f5f3ee"
-        strokeWidth="1.2"
-        strokeDasharray="3 3"
-      />
-      <rect
-        x={3 * 60 + 2}
-        y={3 * 36.6 + 2}
-        width={3 * 60 - 4}
-        height={36.6 - 4}
-        fill="none"
-        stroke="#f5f3ee"
-        strokeWidth="1.2"
-        strokeDasharray="3 3"
-      />
-
-      <g transform="translate(225, 130)">
-        <circle r="14" fill="none" stroke="#f5f3ee" strokeWidth="1.5" />
-        <circle r="3" fill="#f5f3ee" />
-        <line x1="-22" y1="0" x2="-16" y2="0" stroke="#f5f3ee" strokeWidth="1.5" />
-        <line x1="16" y1="0" x2="22" y2="0" stroke="#f5f3ee" strokeWidth="1.5" />
-        <line x1="0" y1="-22" x2="0" y2="-16" stroke="#f5f3ee" strokeWidth="1.5" />
-        <line x1="0" y1="16" x2="0" y2="22" stroke="#f5f3ee" strokeWidth="1.5" />
-      </g>
-    </svg>
   );
 }
 
@@ -496,7 +439,7 @@ function GeoTrigger() {
               letterSpacing: '0.12em',
             }}
           >
-            6.9847°S · 110.5912°E · ZOOM 16
+            7.6855°S · 110.6678°E · ZOOM 18
           </div>
           <div
             style={{
@@ -630,92 +573,6 @@ function GeoTrigger() {
         </div>
       </div>
     </div>
-  );
-}
-
-function VillageMap() {
-  return (
-    <svg
-      viewBox="0 0 320 110"
-      style={{ width: '100%', background: 'var(--bone-2)', border: '1px solid var(--line)' }}
-    >
-      <path
-        d="M 0 70 Q 80 50 160 65 T 320 60"
-        stroke="var(--line-2)"
-        strokeWidth="0.6"
-        fill="none"
-      />
-      <path
-        d="M 80 0 Q 120 40 100 110"
-        stroke="var(--line-2)"
-        strokeWidth="0.6"
-        fill="none"
-      />
-
-      <circle cx="160" cy="55" r="14" fill="var(--terracotta-soft)" stroke="var(--terracotta)" strokeWidth="0.8" />
-      <circle cx="160" cy="55" r="3" fill="var(--terracotta)" />
-      <text x="160" y="80" fontSize="8" fontFamily="var(--f-display)" fontWeight="500" fill="var(--ink)" textAnchor="middle">
-        Sidorejo
-      </text>
-      <text x="160" y="89" fontSize="6" fontFamily="var(--f-mono)" fill="var(--ink-3)" textAnchor="middle">
-        target
-      </text>
-
-      <circle cx="60" cy="35" r="10" fill="var(--bone)" stroke="var(--ink-3)" strokeWidth="0.4" />
-      <text x="60" y="22" fontSize="7" fontFamily="var(--f-display)" fill="var(--ink)" textAnchor="middle">
-        Trucuk
-      </text>
-      {(
-        [
-          ['var(--sage-2)', -5, -3],
-          ['var(--sage-2)', 2, -2],
-          ['var(--sage-2)', 5, 4],
-          ['var(--sage-2)', -3, 4],
-          ['var(--gold)', 0, 0],
-        ] as const
-      ).map(([c, dx, dy], i) => (
-        <circle key={i} cx={60 + dx * 1.5} cy={35 + dy * 1.5} r="1.6" fill={c} />
-      ))}
-
-      <circle cx="260" cy="30" r="10" fill="var(--bone)" stroke="var(--ink-3)" strokeWidth="0.4" />
-      <text x="260" y="17" fontSize="7" fontFamily="var(--f-display)" fill="var(--ink)" textAnchor="middle">
-        Cawas
-      </text>
-      {(
-        [
-          ['var(--sage-2)', -5, -2],
-          ['var(--sage-2)', 3, -3],
-          ['var(--sage-2)', 4, 3],
-          ['var(--sage-2)', -3, 4],
-          ['var(--gold)', 0, 0],
-        ] as const
-      ).map(([c, dx, dy], i) => (
-        <circle key={i} cx={260 + dx * 1.5} cy={30 + dy * 1.5} r="1.6" fill={c} />
-      ))}
-
-      <circle cx="200" cy="92" r="10" fill="var(--bone)" stroke="var(--ink-3)" strokeWidth="0.4" />
-      <text x="200" y="106" fontSize="7" fontFamily="var(--f-display)" fill="var(--ink)" textAnchor="middle">
-        Bayat
-      </text>
-      {(
-        [
-          ['var(--sage-2)', -4, -3],
-          ['var(--terracotta)', 3, -3],
-          ['var(--sage-2)', 4, 3],
-          ['var(--sage-2)', -4, 3],
-        ] as const
-      ).map(([c, dx, dy], i) => (
-        <circle key={i} cx={200 + dx * 1.5} cy={92 + dy * 1.5} r="1.6" fill={c} />
-      ))}
-
-      <line x1="70" y1="40" x2="148" y2="50" stroke="var(--ink-3)" strokeWidth="0.3" strokeDasharray="2 1" />
-      <line x1="250" y1="35" x2="172" y2="50" stroke="var(--ink-3)" strokeWidth="0.3" strokeDasharray="2 1" />
-      <line x1="195" y1="83" x2="165" y2="65" stroke="var(--ink-3)" strokeWidth="0.3" strokeDasharray="2 1" />
-
-      <text x="6" y="105" fontSize="5.5" fontFamily="var(--f-mono)" fill="var(--ink-3)">
-        radius 25 km
-      </text>
-    </svg>
   );
 }
 
@@ -904,7 +761,9 @@ function PeerTrigger() {
           >
             Distribusi Antar-Desa
           </div>
-          <VillageMap />
+          <div style={{ height: 220, border: '1px solid var(--line)', overflow: 'hidden' }}>
+            <VillageMap />
+          </div>
         </div>
 
         <div style={{ marginTop: 4, flex: 1, minHeight: 0 }}>
