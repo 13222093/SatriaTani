@@ -22,34 +22,12 @@ const LayersControl = RawLayersControl as ComponentType<any> & {
   BaseLayer: ComponentType<any>;
 };
 
-// Continuous NDVI color ramp — terracotta (flooded/dead) → gold → green.
-function ndviRGB(ndvi: number): [number, number, number] {
-  const stops: Array<[number, [number, number, number]]> = [
-    [0.0, [139, 58, 26]],   // dark terracotta — submerged / dead
-    [0.25, [196, 99, 60]],  // terracotta — flood damage
-    [0.4, [212, 168, 75]],  // gold — stressed
-    [0.55, [168, 196, 104]], // yellow-green — moderate
-    [0.7, [123, 196, 74]],  // vibrant green — healthy
-    [1.0, [70, 145, 42]],   // dark green — dense vegetation
-  ];
-  for (let i = 0; i < stops.length - 1; i++) {
-    const [a, ca] = stops[i];
-    const [b, cb] = stops[i + 1];
-    if (ndvi <= b) {
-      const t = (ndvi - a) / (b - a);
-      return [
-        Math.round(ca[0] + (cb[0] - ca[0]) * t),
-        Math.round(ca[1] + (cb[1] - ca[1]) * t),
-        Math.round(ca[2] + (cb[2] - ca[2]) * t),
-      ];
-    }
-  }
-  return stops[stops.length - 1][1];
-}
-
-function generateNDVIDataURL(): string {
-  const W = 320;
-  const H = 320;
+// Renders ONLY the flood zone as a soft feathered blob — no visible square,
+// no synthetic green NDVI overlay competing with the real imagery. The
+// healthy paddies show through directly via the underlying Esri tile.
+function generateFloodOverlayDataURL(): string {
+  const W = 384;
+  const H = 384;
   const canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;
@@ -57,11 +35,11 @@ function generateNDVIDataURL(): string {
   if (!ctx) return '';
   const imgData = ctx.createImageData(W, H);
 
-  // Flood centroid in normalized [0,1] image space — slightly south-east of
-  // the parcel center, matches the original "flooded cluster" placement.
-  const fcx = 0.52;
-  const fcy = 0.55;
-  const floodRadius = 0.28;
+  // Flood centroid (normalized image coords) and radii.
+  const fcx = 0.5;
+  const fcy = 0.52;
+  const innerRadius = 0.08;   // fully opaque dark terracotta
+  const outerRadius = 0.28;   // fades to fully transparent
 
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
@@ -69,26 +47,44 @@ function generateNDVIDataURL(): string {
       const v = y / H;
       const dx = u - fcx;
       const dy = v - fcy;
-      const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // Smooth radial falloff: 0 at flood center, ~0.85 at edges.
-      const radial = Math.min(1, dist / floodRadius);
-      const baseNdvi = 0.12 + radial * 0.7;
+      // Multi-frequency noise warps the radial distance so the blob has
+      // organic, paddy-strip-aligned irregularity rather than a perfect circle.
+      const n1 = Math.sin(x * 0.06) * Math.cos(y * 0.05) * 0.020;
+      const n2 = Math.sin(x * 0.14 + y * 0.11) * 0.012;
+      const n3 = Math.cos(x * 0.022 - y * 0.028) * 0.018;
+      const distortedDx = dx + n1 + n3;
+      const distortedDy = dy + n2;
+      const dist = Math.sqrt(distortedDx * distortedDx + distortedDy * distortedDy);
 
-      // Multi-frequency noise for raster texture (no plugin — sin/cos sum).
-      const n1 = Math.sin(x * 0.07) * Math.cos(y * 0.06);
-      const n2 = Math.sin(x * 0.19 + y * 0.17) * 0.6;
-      const n3 = Math.cos(x * 0.035 - y * 0.045) * 0.8;
-      const n4 = Math.sin((x + y) * 0.31) * 0.4;
-      const noise = (n1 + n2 + n3 + n4) * 0.035;
+      let alpha = 0;
+      let r = 139;
+      let g = 58;
+      let b = 26;
 
-      const ndvi = Math.max(0, Math.min(1, baseNdvi + noise));
-      const [r, g, b] = ndviRGB(ndvi);
+      if (dist <= innerRadius) {
+        // Deep terracotta core
+        alpha = 200;
+        r = 139;
+        g = 50;
+        b = 22;
+      } else if (dist <= outerRadius) {
+        // Smooth feather: alpha falls from 200 → 0; color shifts terracotta → orange-tint
+        const t = (dist - innerRadius) / (outerRadius - innerRadius);
+        // Smoothstep curve — gentler than linear, no hard edge
+        const smoothT = t * t * (3 - 2 * t);
+        alpha = 200 * (1 - smoothT);
+        r = 139 + Math.round((196 - 139) * smoothT);
+        g = 50 + Math.round((99 - 50) * smoothT);
+        b = 22 + Math.round((60 - 22) * smoothT);
+      }
+      // Outside outerRadius: alpha = 0 (fully transparent — Esri imagery shows through)
 
-      // Slight per-pixel alpha jitter so the overlay reads as raster data
-      // rather than a flat translucent layer.
-      const alphaJitter = (Math.sin(x * 0.13 + y * 0.11) + 1) * 8;
-      const alpha = 142 + alphaJitter;
+      // Add slight alpha noise even within the blob for raster texture
+      if (alpha > 0) {
+        const texNoise = (Math.sin(x * 0.4 + y * 0.3) + Math.cos(x * 0.7 - y * 0.5)) * 6;
+        alpha = Math.max(0, Math.min(220, alpha + texNoise));
+      }
 
       const idx = (y * W + x) * 4;
       imgData.data[idx] = r;
@@ -106,7 +102,7 @@ export default function ParcelMapLeaflet() {
   const [ndviUrl, setNdviUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    setNdviUrl(generateNDVIDataURL());
+    setNdviUrl(generateFloodOverlayDataURL());
   }, []);
 
   const bounds: [[number, number], [number, number]] = [
