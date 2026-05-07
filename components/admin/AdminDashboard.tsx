@@ -615,7 +615,7 @@ function JavaMap() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            zIndex: 500,
+            zIndex: 1100,
             pointerEvents: 'none',
           }}
         >
@@ -640,7 +640,7 @@ function JavaMap() {
             position: 'absolute',
             bottom: 18,
             right: 18,
-            zIndex: 500,
+            zIndex: 1100,
             pointerEvents: 'none',
             color: PARCH,
             fontFamily: 'var(--f-mono)',
@@ -671,6 +671,7 @@ function JavaMap() {
             flexDirection: 'column',
             gap: 6,
             width: 196,
+            zIndex: 1100,
           }}
         >
           <div
@@ -738,6 +739,7 @@ function JavaMap() {
             border: '1px solid rgba(244,237,216,0.15)',
             borderRadius: 'var(--r-control)',
             padding: '10px 12px',
+            zIndex: 1100,
           }}
         >
           <div
