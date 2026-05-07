@@ -221,3 +221,74 @@ button { font-family: inherit; cursor: pointer; }
 @media (max-width: 960px) {
   .coop-body-grid { grid-template-columns: 1fr; }
 }
+
+/* ─────── Pusat Nasional Leaflet map ─────── */
+@keyframes hotspotPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(196, 80, 42, 0.55); }
+  70%  { box-shadow: 0 0 0 14px rgba(196, 80, 42, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(196, 80, 42, 0); }
+}
+.hotspot-icon-wrapper { background: transparent !important; border: none !important; }
+.hotspot-marker {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  user-select: none;
+}
+.hotspot-marker:hover { transform: scale(1.08); }
+.hotspot-marker.sev-high { animation: hotspotPulse 2.2s infinite; }
+
+.province-label-wrapper { background: transparent !important; border: none !important; pointer-events: none; }
+.province-label {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 11px;
+  color: rgba(244, 237, 216, 0.85);
+  text-shadow: 0 1px 4px rgba(10, 19, 34, 0.85);
+  white-space: nowrap;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.climate-anomaly-wrapper { background: transparent !important; border: none !important; pointer-events: none; }
+.climate-anomaly {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--gold, #B8860B);
+  text-shadow: 0 1px 6px rgba(10, 19, 34, 0.95);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Leaflet popup theme override — match parchment/navy palette */
+.leaflet-popup-content-wrapper {
+  background: #fff;
+  border-radius: var(--r-card);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  padding: 0;
+}
+.leaflet-popup-content {
+  margin: 12px 14px;
+  font-family: var(--f-sans);
+  line-height: 1.4;
+}
+.leaflet-popup-tip { background: #fff; }
+
+/* Attribution chip — small, low-contrast */
+.leaflet-control-attribution {
+  background: rgba(10, 19, 34, 0.7) !important;
+  color: rgba(244, 237, 216, 0.55) !important;
+  font-size: 9px !important;
+  padding: 2px 6px !important;
+}
+.leaflet-control-attribution a {
+  color: rgba(244, 237, 216, 0.75) !important;
+}

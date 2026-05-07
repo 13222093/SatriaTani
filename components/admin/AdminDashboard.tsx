@@ -7,7 +7,31 @@
 
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { UnifiedHeader } from '@/components/UnifiedHeader';
+
+const JavaMapLeaflet = dynamic(() => import('./JavaMapLeaflet'), {
+  ssr: false,
+  loading: () => (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#F4EDD8',
+        fontFamily: 'var(--f-mono)',
+        fontSize: 10,
+        letterSpacing: '0.18em',
+        opacity: 0.5,
+        background: '#0a1322',
+      }}
+    >
+      memuat peta…
+    </div>
+  ),
+});
 import actionQueueRaw from '@/lib/mock-data/action-queue.json';
 import provincesRaw from '@/lib/mock-data/provinces.json';
 import hotspotsRaw from '@/lib/mock-data/hotspots.json';
@@ -36,6 +60,8 @@ interface ActionItem {
 interface Province {
   code: string;
   name: string;
+  lat: number;
+  lng: number;
   members: number;
   ha: number;
   claims: number;
@@ -47,6 +73,8 @@ interface Province {
 interface Hotspot {
   id: string;
   name: string;
+  lat: number;
+  lng: number;
   x: number;
   y: number;
   sev: Severity;
@@ -436,12 +464,6 @@ function JavaMap() {
   const [selected, setSelected] = useState<string | null>(null);
   const [liveOn, setLiveOn] = useState(true);
 
-  const sevColor = (s: Severity) => (s === 'high' ? TERR : s === 'med' ? GOLD : '#a0a8b4');
-  const sevR = (s: Severity) => (s === 'high' ? 9 : s === 'med' ? 7 : 5);
-  const sevHeat = (s: Severity) => (s === 'high' ? 42 : s === 'med' ? 28 : 18);
-
-  const sel = HOTSPOTS.find((h) => h.id === selected);
-
   return (
     <div
       style={{
@@ -570,271 +592,34 @@ function JavaMap() {
       </div>
 
       <div style={{ position: 'relative' }}>
-        <svg
-          viewBox="0 0 950 360"
-          style={{ width: '100%', height: 'auto', display: 'block' }}
+        <div style={{ height: 420, width: '100%' }}>
+          <JavaMapLeaflet
+            activeLayer={activeLayer as 'risk' | 'loss' | 'density' | 'climate'}
+            selected={selected}
+            onSelect={setSelected}
+            onOpenClaim={(claimId) => router.push(`/klaim/${claimId}`)}
+          />
+        </div>
+
+        {/* North arrow overlay (was inside SVG) */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 14,
+            left: 14,
+            width: 28,
+            height: 28,
+            borderRadius: '50%',
+            background: 'rgba(244,237,216,0.08)',
+            border: '1px solid rgba(244,237,216,0.18)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 500,
+            pointerEvents: 'none',
+          }}
         >
-          <defs>
-            <pattern id="batikDot2" patternUnits="userSpaceOnUse" width="14" height="14">
-              <circle cx="2" cy="2" r="0.6" fill="#2a3a52" />
-              <circle cx="9" cy="9" r="0.6" fill="#2a3a52" />
-            </pattern>
-            <radialGradient id="hotHigh2">
-              <stop offset="0%" stopColor={TERR} stopOpacity="0.85" />
-              <stop offset="60%" stopColor={TERR} stopOpacity="0.32" />
-              <stop offset="100%" stopColor={TERR} stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="hotMed2">
-              <stop offset="0%" stopColor={GOLD} stopOpacity="0.85" />
-              <stop offset="60%" stopColor={GOLD} stopOpacity="0.28" />
-              <stop offset="100%" stopColor={GOLD} stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="hotLow2">
-              <stop offset="0%" stopColor="#a0a8b4" stopOpacity="0.6" />
-              <stop offset="60%" stopColor="#a0a8b4" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="#a0a8b4" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-
-          <rect width="950" height="360" fill="#0a1322" />
-          <rect width="950" height="360" fill="url(#batikDot2)" />
-
-          {/* Madura */}
-          <path
-            d="M 798 152 Q 820 142 860 138 Q 905 135 938 145 Q 942 156 922 162 Q 880 168 840 168 Q 808 167 795 160 Z"
-            fill="#1c2c40"
-            stroke="#4a5e7a"
-            strokeWidth="0.5"
-          />
-          <text
-            x="868"
-            y="155"
-            fontSize="8.5"
-            fill="#5a7090"
-            fontFamily="var(--f-mono)"
-            textAnchor="middle"
-            letterSpacing="1"
-          >
-            MADURA
-          </text>
-
-          {/* Banten */}
-          <path
-            d="M 70 215 L 76 198 L 96 182 L 122 178 L 156 184 L 184 188 L 198 208 L 212 232 L 218 258 L 200 272 L 168 274 L 138 268 L 108 252 L 88 238 L 78 226 Z"
-            fill="#1c2c40"
-            stroke="#4a5e7a"
-            strokeWidth="0.7"
-          />
-
-          {/* DKI Jakarta */}
-          <path
-            d="M 218 200 L 244 198 L 252 212 L 248 224 L 224 222 L 215 212 Z"
-            fill="#243854"
-            stroke="#4a5e7a"
-            strokeWidth="0.7"
-          />
-
-          {/* Jawa Barat */}
-          <path
-            d="M 198 208 L 212 232 L 218 258 L 232 268 L 258 274 L 290 270 L 322 264 L 358 268 L 398 272 L 432 268 L 446 252 L 452 232 L 444 212 L 422 196 L 388 188 L 348 184 L 308 188 L 280 196 L 252 212 L 248 224 L 224 222 L 215 212 Z"
-            fill="#1c2c40"
-            stroke="#4a5e7a"
-            strokeWidth="0.7"
-          />
-
-          {/* Jawa Tengah */}
-          <path
-            d="M 446 212 L 452 232 L 446 252 L 458 264 L 484 268 L 518 270 L 552 268 L 588 264 L 622 264 L 654 260 L 670 248 L 678 230 L 672 208 L 656 188 L 632 178 L 600 174 L 562 178 L 528 184 L 498 192 L 472 200 Z"
-            fill="#1c2c40"
-            stroke="#4a5e7a"
-            strokeWidth="0.7"
-          />
-
-          {/* DI Yogyakarta */}
-          <path
-            d="M 642 248 L 678 244 L 684 264 L 668 274 L 644 270 Z"
-            fill="#243854"
-            stroke="#4a5e7a"
-            strokeWidth="0.7"
-          />
-
-          {/* Jawa Timur */}
-          <path
-            d="M 670 248 L 678 230 L 700 218 L 728 208 L 762 200 L 798 198 L 826 204 L 858 218 L 884 234 L 902 248 L 906 268 L 884 280 L 854 286 L 818 286 L 782 282 L 750 276 L 718 268 L 690 262 L 678 254 Z"
-            fill="#1c2c40"
-            stroke="#4a5e7a"
-            strokeWidth="0.7"
-          />
-
-          {/* Mountain ridge highlight */}
-          <path
-            d="M 200 220 Q 280 210 360 218 T 520 218 T 700 224 T 880 246"
-            stroke="#3a4e72"
-            strokeWidth="0.6"
-            fill="none"
-            opacity="0.6"
-            strokeDasharray="1 2"
-          />
-
-          {activeLayer === 'risk' &&
-            HOTSPOTS.map((h) => (
-              <circle
-                key={`heat-${h.id}`}
-                cx={h.x}
-                cy={h.y}
-                r={sevHeat(h.sev)}
-                fill={
-                  h.sev === 'high'
-                    ? 'url(#hotHigh2)'
-                    : h.sev === 'med'
-                      ? 'url(#hotMed2)'
-                      : 'url(#hotLow2)'
-                }
-              />
-            ))}
-
-          {activeLayer === 'density' &&
-            PROVINCES.map((p) => {
-              const cxMap: Record<string, number> = {
-                BTN: 144,
-                JKT: 234,
-                JBR: 322,
-                JTG: 560,
-                DIY: 660,
-                JTM: 798,
-              };
-              const cx = cxMap[p.code];
-              const r = Math.sqrt(p.members) / 7;
-              return cx ? (
-                <circle
-                  key={p.code}
-                  cx={cx}
-                  cy={228}
-                  r={r}
-                  fill={EM}
-                  opacity="0.35"
-                  stroke={EM}
-                  strokeWidth="0.6"
-                />
-              ) : null;
-            })}
-
-          {activeLayer === 'climate' && (
-            <g opacity="0.35">
-              <rect x="430" y="170" width="280" height="110" fill="url(#batikDot2)" />
-              <text
-                x="570"
-                y="220"
-                fill={GOLD}
-                fontSize="11"
-                fontFamily="var(--f-mono)"
-                textAnchor="middle"
-                letterSpacing="2"
-              >
-                +2,1°C ANOMALI
-              </text>
-            </g>
-          )}
-
-          {/* Hotspot pins */}
-          {HOTSPOTS.map((h) => {
-            const isSel = selected === h.id;
-            return (
-              <g
-                key={h.id}
-                style={{ cursor: 'pointer' }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelected(isSel ? null : h.id);
-                }}
-              >
-                <circle
-                  cx={h.x}
-                  cy={h.y}
-                  r={sevR(h.sev) + 4}
-                  fill="none"
-                  stroke={sevColor(h.sev)}
-                  strokeWidth="1"
-                  opacity={isSel ? 1 : 0.5}
-                />
-                <circle
-                  cx={h.x}
-                  cy={h.y}
-                  r={sevR(h.sev)}
-                  fill={sevColor(h.sev)}
-                  stroke={PARCH}
-                  strokeWidth="1.4"
-                />
-                <text
-                  x={h.x}
-                  y={h.y + 2.5}
-                  fontSize="7.5"
-                  fontFamily="var(--f-mono)"
-                  fontWeight="600"
-                  fill="#fff"
-                  textAnchor="middle"
-                >
-                  {h.count}
-                </text>
-              </g>
-            );
-          })}
-
-          {/* Province labels */}
-          <text
-            x="138"
-            y="232"
-            fontSize="10"
-            fontFamily="var(--f-display)"
-            fontWeight="500"
-            fill={PARCH}
-            opacity="0.85"
-          >
-            Banten
-          </text>
-          <text x="232" y="216" fontSize="8" fontFamily="var(--f-display)" fill={PARCH} opacity="0.75">
-            DKI
-          </text>
-          <text
-            x="318"
-            y="244"
-            fontSize="11"
-            fontFamily="var(--f-display)"
-            fontWeight="500"
-            fill={PARCH}
-            opacity="0.9"
-          >
-            Jawa Barat
-          </text>
-          <text
-            x="558"
-            y="232"
-            fontSize="11"
-            fontFamily="var(--f-display)"
-            fontWeight="500"
-            fill={PARCH}
-            opacity="0.9"
-          >
-            Jawa Tengah
-          </text>
-          <text x="660" y="262" fontSize="8" fontFamily="var(--f-display)" fill={PARCH} opacity="0.85">
-            DIY
-          </text>
-          <text
-            x="790"
-            y="248"
-            fontSize="11"
-            fontFamily="var(--f-display)"
-            fontWeight="500"
-            fill={PARCH}
-            opacity="0.9"
-          >
-            Jawa Timur
-          </text>
-
-          {/* Compass */}
-          <g transform="translate(34, 32)">
-            <circle r="14" fill={PARCH} opacity="0.08" />
+          <svg width="20" height="20" viewBox="-12 -12 24 24" style={{ overflow: 'visible' }}>
             <text
               y="-2"
               fontSize="9"
@@ -846,27 +631,35 @@ function JavaMap() {
               N
             </text>
             <path d="M 0 -10 L 3 5 L 0 2 L -3 5 Z" fill={GOLD} />
-          </g>
+          </svg>
+        </div>
 
-          {/* Scale */}
-          <g transform="translate(820, 332)">
-            <line x1="0" y1="0" x2="80" y2="0" stroke={PARCH} strokeWidth="0.8" />
-            <line x1="0" y1="-3" x2="0" y2="3" stroke={PARCH} strokeWidth="0.8" />
-            <line x1="40" y1="-3" x2="40" y2="3" stroke={PARCH} strokeWidth="0.8" />
-            <line x1="80" y1="-3" x2="80" y2="3" stroke={PARCH} strokeWidth="0.8" />
-            <text
-              x="40"
-              y="-7"
-              fontSize="8"
-              fill={PARCH}
-              fontFamily="var(--f-mono)"
-              textAnchor="middle"
-              opacity="0.7"
-            >
-              100 km
-            </text>
-          </g>
-        </svg>
+        {/* Scale bar overlay (was inside SVG) */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 18,
+            right: 18,
+            zIndex: 500,
+            pointerEvents: 'none',
+            color: PARCH,
+            fontFamily: 'var(--f-mono)',
+            fontSize: 9,
+            opacity: 0.75,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 3,
+          }}
+        >
+          <span>100 km</span>
+          <svg width="80" height="6">
+            <line x1="0" y1="3" x2="80" y2="3" stroke={PARCH} strokeWidth="0.8" />
+            <line x1="0" y1="0" x2="0" y2="6" stroke={PARCH} strokeWidth="0.8" />
+            <line x1="40" y1="0" x2="40" y2="6" stroke={PARCH} strokeWidth="0.8" />
+            <line x1="80" y1="0" x2="80" y2="6" stroke={PARCH} strokeWidth="0.8" />
+          </svg>
+        </div>
 
         {/* Layer toggles */}
         <div
@@ -997,98 +790,6 @@ function JavaMap() {
           </div>
         </div>
 
-        {sel && (
-          <div
-            style={{
-              position: 'absolute',
-              left: `${(sel.x / 950) * 100}%`,
-              top: `${(sel.y / 360) * 100}%`,
-              transform: 'translate(14px, -50%)',
-              background: '#fff',
-              color: NAVY,
-              border: `2px solid ${sevColor(sel.sev)}`,
-              borderRadius: 'var(--r-card)',
-              padding: '12px 14px',
-              minWidth: 220,
-              boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-              zIndex: 5,
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: 6,
-              }}
-            >
-              <div style={{ fontFamily: 'var(--f-display)', fontSize: 15, fontWeight: 500 }}>
-                {sel.name}
-              </div>
-              <div
-                onClick={() => setSelected(null)}
-                style={{
-                  cursor: 'pointer',
-                  color: 'var(--muted)',
-                  fontSize: 16,
-                  lineHeight: 1,
-                }}
-              >
-                ×
-              </div>
-            </div>
-            <div style={{ fontSize: 11.5, color: 'var(--muted)', marginBottom: 8 }}>
-              {sel.kind} · severity {sel.sev}
-            </div>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: 8,
-                fontSize: 12,
-              }}
-            >
-              <div>
-                <div style={{ color: 'var(--muted)', fontSize: 10 }}>Pemicu</div>
-                <div
-                  style={{
-                    fontFamily: 'var(--f-mono)',
-                    fontWeight: 600,
-                    color: sel.fired === '3/3' ? TERR : NAVY,
-                  }}
-                >
-                  {sel.fired} fired
-                </div>
-              </div>
-              <div>
-                <div style={{ color: 'var(--muted)', fontSize: 10 }}>Klaim</div>
-                <div style={{ fontWeight: 600 }}>{sel.count}</div>
-              </div>
-              <div>
-                <div style={{ color: 'var(--muted)', fontSize: 10 }}>Exposure</div>
-                <div style={{ fontWeight: 600 }}>{sel.exposure}</div>
-              </div>
-              <div>
-                <div style={{ color: 'var(--muted)', fontSize: 10 }}>Status</div>
-                <div
-                  style={{
-                    color: sel.fired === '3/3' ? TERR : GOLD,
-                    fontWeight: 600,
-                  }}
-                >
-                  {sel.fired === '3/3' ? 'siaga' : 'pantau'}
-                </div>
-              </div>
-            </div>
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => router.push('/klaim/STN-2026-04-1183')}
-              style={{ width: '100%', marginTop: 10, justifyContent: 'center' }}
-            >
-              Buka klaim →
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

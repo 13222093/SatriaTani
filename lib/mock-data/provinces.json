@@ -1,8 +1,8 @@
 [
-  { "code": "BTN", "name": "Banten",        "members": 12840, "ha": 16210, "claims":  84, "claims30": 11, "payout": "Rp 2.940.000.000",  "risk": 0.42, "status": "sehat" },
-  { "code": "JKT", "name": "DKI Jakarta",   "members":   210, "ha":   280, "claims":   2, "claims30":  0, "payout": "Rp 124.000.000",     "risk": 0.18, "status": "sehat" },
-  { "code": "JBR", "name": "Jawa Barat",    "members": 48230, "ha": 64180, "claims": 312, "claims30": 38, "payout": "Rp 11.840.000.000", "risk": 0.61, "status": "pantau" },
-  { "code": "JTG", "name": "Jawa Tengah",   "members": 56010, "ha": 78440, "claims": 408, "claims30": 84, "payout": "Rp 14.220.000.000", "risk": 0.74, "status": "siaga" },
-  { "code": "DIY", "name": "DI Yogyakarta", "members":  6420, "ha":  8120, "claims":  41, "claims30":  9, "payout": "Rp 1.420.000.000",  "risk": 0.55, "status": "pantau" },
-  { "code": "JTM", "name": "Jawa Timur",    "members": 60510, "ha": 79350, "claims": 360, "claims30": 61, "payout": "Rp 11.420.000.000", "risk": 0.68, "status": "pantau" }
+  { "code": "BTN", "name": "Banten",        "lat": -6.4500, "lng": 106.0000, "members": 12840, "ha": 16210, "claims":  84, "claims30": 11, "payout": "Rp 2.940.000.000",  "risk": 0.42, "status": "sehat" },
+  { "code": "JKT", "name": "DKI Jakarta",   "lat": -6.2000, "lng": 106.8456, "members":   210, "ha":   280, "claims":   2, "claims30":  0, "payout": "Rp 124.000.000",     "risk": 0.18, "status": "sehat" },
+  { "code": "JBR", "name": "Jawa Barat",    "lat": -6.9000, "lng": 107.6000, "members": 48230, "ha": 64180, "claims": 312, "claims30": 38, "payout": "Rp 11.840.000.000", "risk": 0.61, "status": "pantau" },
+  { "code": "JTG", "name": "Jawa Tengah",   "lat": -7.1500, "lng": 110.1400, "members": 56010, "ha": 78440, "claims": 408, "claims30": 84, "payout": "Rp 14.220.000.000", "risk": 0.74, "status": "siaga" },
+  { "code": "DIY", "name": "DI Yogyakarta", "lat": -7.8754, "lng": 110.4262, "members":  6420, "ha":  8120, "claims":  41, "claims30":  9, "payout": "Rp 1.420.000.000",  "risk": 0.55, "status": "pantau" },
+  { "code": "JTM", "name": "Jawa Timur",    "lat": -7.5360, "lng": 112.2384, "members": 60510, "ha": 79350, "claims": 360, "claims30": 61, "payout": "Rp 11.420.000.000", "risk": 0.68, "status": "pantau" }
 ]
