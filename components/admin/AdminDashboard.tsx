@@ -219,18 +219,6 @@ function ActionQueue() {
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
           <div
             style={{
-              fontFamily: 'var(--f-mono)',
-              fontSize: 10,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: TERR,
-              fontWeight: 600,
-            }}
-          >
-            Antrian Aksi
-          </div>
-          <div
-            style={{
               fontFamily: 'var(--f-display)',
               fontSize: 22,
               fontWeight: 500,
