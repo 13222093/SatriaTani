@@ -1,52 +1,45 @@
 'use client';
 
 // react-leaflet 4.x + @types/leaflet 1.9 have a known prop-inheritance type bug;
-// cast MapContainer to a permissive component to keep MapOptions props (zoom,
-// minZoom, scrollWheelZoom, etc.) callable from TSX.
+// cast each primitive to a permissive component so MapOptions props (zoom,
+// minZoom, scrollWheelZoom, etc.) stay callable from TSX.
 import {
   MapContainer as RawMapContainer,
   TileLayer as RawTileLayer,
-  Rectangle as RawRectangle,
+  Polygon as RawPolygon,
   LayersControl as RawLayersControl,
 } from 'react-leaflet';
 import type { ComponentType } from 'react';
 import {
   PARCEL_BOUNDS,
-  PARCEL_GRID,
-  cellBounds,
-  deterministicNDVI,
-  FLOODED_CELL_KEYS,
+  generatePaddies,
   ndviColor,
 } from '@/lib/geo';
 
 const MapContainer = RawMapContainer as ComponentType<any>;
 const TileLayer = RawTileLayer as ComponentType<any>;
-const Rectangle = RawRectangle as ComponentType<any>;
+const Polygon = RawPolygon as ComponentType<any>;
 const LayersControl = RawLayersControl as ComponentType<any> & {
   BaseLayer: ComponentType<any>;
 };
 
-const FLOOD_OUTLINE_BOUNDS: [[number, number], [number, number]] = [
-  cellBounds(2, 3)[0],
-  cellBounds(4, 5)[1],
-];
-
 export default function ParcelMapLeaflet() {
-  const ndvi = deterministicNDVI();
-  const cells: { key: string; row: number; col: number; ndvi: number; flooded: boolean }[] = [];
-  for (let r = 0; r < PARCEL_GRID.rows; r++) {
-    for (let c = 0; c < PARCEL_GRID.cols; c++) {
-      const key = `${r}-${c}`;
-      const flooded = FLOODED_CELL_KEYS.has(key);
-      cells.push({
-        key,
-        row: r,
-        col: c,
-        ndvi: flooded ? 0.22 : ndvi[r * PARCEL_GRID.cols + c],
-        flooded,
-      });
-    }
-  }
+  const paddies = generatePaddies();
+
+  // Outline around the contiguous flooded cluster — derived from the flooded
+  // paddy polygons' combined bbox.
+  const floodedPaddies = paddies.filter((p) => p.flooded);
+  const floodedLats = floodedPaddies.flatMap((p) => p.polygon.map((c) => c[0]));
+  const floodedLngs = floodedPaddies.flatMap((p) => p.polygon.map((c) => c[1]));
+  const floodOutline =
+    floodedPaddies.length > 0
+      ? [
+          [Math.min(...floodedLats), Math.min(...floodedLngs)],
+          [Math.min(...floodedLats), Math.max(...floodedLngs)],
+          [Math.max(...floodedLats), Math.max(...floodedLngs)],
+          [Math.max(...floodedLats), Math.min(...floodedLngs)],
+        ]
+      : null;
 
   const bounds: [[number, number], [number, number]] = [
     [PARCEL_BOUNDS.south, PARCEL_BOUNDS.west],
@@ -87,32 +80,31 @@ export default function ParcelMapLeaflet() {
         </LayersControl.BaseLayer>
       </LayersControl>
 
-      {cells.map((cell) => {
-        const cb = cellBounds(cell.row, cell.col);
-        return (
-          <Rectangle
-            key={cell.key}
-            bounds={cb}
-            pathOptions={{
-              color: ndviColor(cell.ndvi, cell.flooded),
-              fillColor: ndviColor(cell.ndvi, cell.flooded),
-              fillOpacity: 0.55,
-              weight: 0.4,
-              opacity: 0.7,
-            }}
-          />
-        );
-      })}
+      {paddies.map((p) => (
+        <Polygon
+          key={p.id}
+          positions={p.polygon}
+          pathOptions={{
+            color: ndviColor(p.ndvi, p.flooded),
+            fillColor: ndviColor(p.ndvi, p.flooded),
+            fillOpacity: 0.55,
+            weight: 0.6,
+            opacity: 0.85,
+          }}
+        />
+      ))}
 
-      <Rectangle
-        bounds={FLOOD_OUTLINE_BOUNDS}
-        pathOptions={{
-          color: '#f5f3ee',
-          weight: 1.2,
-          dashArray: '4 3',
-          fillOpacity: 0,
-        }}
-      />
+      {floodOutline && (
+        <Polygon
+          positions={floodOutline}
+          pathOptions={{
+            color: '#f5f3ee',
+            weight: 1.2,
+            dashArray: '4 3',
+            fillOpacity: 0,
+          }}
+        />
+      )}
     </MapContainer>
   );
 }

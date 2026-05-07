@@ -117,3 +117,95 @@ export function ndviColor(ndvi: number, flooded: boolean): string {
   if (ndvi > 0.4) return '#d4a84b';
   return '#a08a4a';
 }
+
+// ─────────── Paddy field polygons ───────────
+// Programmatically generated paddy polygons within the parcel bbox. Layout:
+// 4×4 = 16 paddies in a tilted grid (~22° clockwise from north, mimicking the
+// way Klaten paddies align along irrigation canals rather than magnetic north).
+// Each paddy ~28m × 28m before bunds & jitter; deterministic.
+
+const PADDY_ROTATION = (22 * Math.PI) / 180;
+const PADDY_COLS = 4;
+const PADDY_ROWS = 4;
+
+const METERS_PER_DEG_LAT = 110574;
+const METERS_PER_DEG_LNG_AT_SIDOREJO = 109520;
+
+function localMetersToLatLng(xEast: number, yNorth: number): LatLng {
+  // (xEast, yNorth) is in tilted local meters relative to bbox center.
+  // Rotate clockwise by PADDY_ROTATION to get map-aligned meters.
+  const cos = Math.cos(PADDY_ROTATION);
+  const sin = Math.sin(PADDY_ROTATION);
+  const xMap = xEast * cos - yNorth * sin;
+  const yMap = xEast * sin + yNorth * cos;
+  return [
+    SIDOREJO_CENTER[0] + yMap / METERS_PER_DEG_LAT,
+    SIDOREJO_CENTER[1] + xMap / METERS_PER_DEG_LNG_AT_SIDOREJO,
+  ];
+}
+
+// Tiny deterministic PRNG seeded by row + col, for cell-size jitter.
+function jitter(r: number, c: number, salt: number): number {
+  const v = Math.sin(r * 12.9898 + c * 78.233 + salt * 37.719) * 43758.5453;
+  return v - Math.floor(v); // [0, 1)
+}
+
+// Indices flagged as flooded in the source-of-truth dataset.
+const FLOODED_PADDIES = new Set(['1-1', '1-2', '2-1', '2-2', '2-3', '3-2']);
+
+export type Paddy = {
+  id: string;
+  polygon: LatLng[]; // 4 corners, lat/lng
+  ndvi: number;
+  flooded: boolean;
+  area: number; // square meters
+};
+
+export function generatePaddies(): Paddy[] {
+  const cellW = 28; // meters
+  const cellH = 28;
+  const bund = 1.5; // meters of gap between paddies (rice field bunds / pematang)
+
+  const out: Paddy[] = [];
+
+  for (let r = 0; r < PADDY_ROWS; r++) {
+    for (let c = 0; c < PADDY_COLS; c++) {
+      // Cell center in tilted local meters, with bbox center at origin.
+      const cx = (c - (PADDY_COLS - 1) / 2) * cellW;
+      const cy = ((PADDY_ROWS - 1) / 2 - r) * cellH;
+
+      // Per-cell jitter: trim 0–4m off width / height for natural variation.
+      const wJitter = jitter(r, c, 1) * 4;
+      const hJitter = jitter(r, c, 2) * 4;
+      const w = cellW - bund * 2 - wJitter;
+      const h = cellH - bund * 2 - hJitter;
+
+      // 4 corners in tilted local meters
+      const halfW = w / 2;
+      const halfH = h / 2;
+      const corners: Array<[number, number]> = [
+        [cx - halfW, cy - halfH], // SW
+        [cx + halfW, cy - halfH], // SE
+        [cx + halfW, cy + halfH], // NE
+        [cx - halfW, cy + halfH], // NW
+      ];
+      const polygon = corners.map(([x, y]) => localMetersToLatLng(x, y));
+
+      const key = `${r}-${c}`;
+      const flooded = FLOODED_PADDIES.has(key);
+
+      // NDVI: deterministic from cell index. Flooded → low.
+      const baseNdvi = 0.42 + jitter(r, c, 3) * 0.45;
+      const ndvi = flooded ? 0.22 : baseNdvi;
+
+      out.push({
+        id: `paddy-${key}`,
+        polygon,
+        ndvi,
+        flooded,
+        area: w * h,
+      });
+    }
+  }
+  return out;
+}
