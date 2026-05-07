@@ -227,7 +227,7 @@ function ActionQueue() {
               fontWeight: 600,
             }}
           >
-            Antrian Aksi · prioritas hari ini
+            Antrian Aksi
           </div>
           <div
             style={{
@@ -241,7 +241,7 @@ function ActionQueue() {
             8 klaim memerlukan perhatian Anda
           </div>
           <div style={{ fontSize: 12, color: 'var(--muted)' }}>
-            dari 184.220 polis aktif · Pulau Jawa
+            prioritas hari ini · 184.220 polis aktif · Pulau Jawa
           </div>
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
@@ -1265,7 +1265,7 @@ function TriggerBreakdown() {
   return (
     <div>
       <div className="kpi-eyebrow" style={{ marginBottom: 8 }}>
-        Pemicu yang Terpicu · 30 hari · ringkasan deskriptif
+        Pemicu yang Terpicu · 30 hari
       </div>
       <div className="card" style={{ padding: 16 }}>
         <div style={{ display: 'flex', gap: 28, marginBottom: 12 }}>
